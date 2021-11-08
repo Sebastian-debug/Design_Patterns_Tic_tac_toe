@@ -102,6 +102,9 @@ def free_space_check(position):
     return True if buffer[int(position)] == " " else False
 
 
+def get_file_line_numbers(file):
+    return sum(1 for _ in open(file))
+
 def replay():
     while True:
         x = input("Do you want to play again? (Yes/No)").lower()
@@ -120,10 +123,9 @@ def replay():
 
 def history_file():
     global current_line_history
-    line_numbers = sum(1 for _ in open("history.txt"))
 
     with open('history.txt', "a+") as file:
-        if current_line_history != line_numbers:
+        if current_line_history != get_file_line_numbers("history.txt"):
             file.seek(0)
             tmp_history_lines = file.readlines()
             file.seek(0)
@@ -148,9 +150,8 @@ def undo(redo):
     global current_line_history
 
     if redo:
-        line_numbers = sum(1 for _ in open("history.txt"))
         current_line_history += 1
-        if line_numbers < current_line_history:
+        if get_file_line_numbers("history.txt") < current_line_history:
             current_line_history -= 1
             print("Cannot redo, there are no steps ahead!")
             return
@@ -164,8 +165,6 @@ def undo(redo):
     for index, marker in enumerate(undo_history_line):
         if len(buffer) != index + 1:
             buffer[index + 1] = marker
-
-
 
 
 if __name__ == "__main__":
