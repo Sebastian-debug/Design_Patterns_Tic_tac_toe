@@ -115,11 +115,20 @@ def replay():
 
 
 def history_file():
-
     global current_line_history
-    current_line_history += 1
+    line_numbers = sum(1 for _ in open("history.txt"))
 
-    with open('history.txt', "a") as file:
+    with open('history.txt', "a+") as file:
+        if current_line_history != line_numbers:
+            file.seek(0)
+            tmp_history_lines = file.readlines()
+            file.seek(0)
+            file.truncate()
+            for line in file:
+                print(f"LEER:{line}")
+            for line in tmp_history_lines[:current_line_history]:
+                file.write(line)
+
         for field in buffer[1:]:
             if field == " ":
                 file.write(" ")
@@ -129,9 +138,10 @@ def history_file():
                 file.write("O")
         file.write("\n")
 
+    current_line_history += 1
+
 
 def undo():
-
     file_to_game = "history.txt"
     global current_line_history
     current_line_history -= 1
@@ -142,12 +152,12 @@ def undo():
             buffer[index + 1] = marker
 
 
-
 if __name__ == "__main__":
     # file = easygui.fileopenbox()
     # print(file) // load game
     if os.path.exists("history.txt"):
         os.remove("history.txt")
+    open('history.txt', "a")
 
     print("Welcome to Tic Tac Toe!")
     history_file()
