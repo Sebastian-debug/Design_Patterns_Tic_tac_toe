@@ -124,8 +124,6 @@ def history_file():
             tmp_history_lines = file.readlines()
             file.seek(0)
             file.truncate()
-            for line in file:
-                print(f"LEER:{line}")
             for line in tmp_history_lines[:current_line_history]:
                 file.write(line)
 
