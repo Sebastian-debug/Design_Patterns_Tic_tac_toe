@@ -31,7 +31,7 @@ def user_choice(player):
         if current_line_history > 1:
             print("You can use the command 'U' to undo a game step and 'R' to redo a game step \n")
         choice = input(f"Please Player {player} enter a number between 1 and 9:")
-        print(f"Currentlinehistory:{current_line_history}")
+
         if not choice.isdigit():
             if choice == "U":
                 if current_line_history == 1:
@@ -150,8 +150,6 @@ def undo(redo):
     if redo:
         line_numbers = sum(1 for _ in open("history.txt"))
         current_line_history += 1
-        print(f"linenumbers: {line_numbers}\n")
-        print(f"current_line_history: {current_line_history}")
         if line_numbers < current_line_history:
             current_line_history -= 1
             print("Cannot redo, there are no steps ahead!")
@@ -162,14 +160,12 @@ def undo(redo):
     linecache.clearcache()
 
     undo_history_line = linecache.getline(file_to_game, current_line_history)
-    print(f"undoline: {undo_history_line}")
 
     for index, marker in enumerate(undo_history_line):
         if len(buffer) != index + 1:
-            print(f"Marker: {marker}")
             buffer[index + 1] = marker
 
-    print(f"buffer: {buffer} \n")
+
 
 
 if __name__ == "__main__":
