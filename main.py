@@ -24,7 +24,7 @@ def onEnter(event):
         return
     set_marker(player_marker, choice)
     display()
-    if win_check("X", player_count):
+    if win_check(player_marker, player_count):
         label10['text'] = "Player " + str(player_count) + " won the Game!"
     else:
         label10['text'] = "[1-9] Pick [U] Undo [R] Redo"
