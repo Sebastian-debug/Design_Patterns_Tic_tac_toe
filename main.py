@@ -2,7 +2,9 @@ import random
 import easygui
 import linecache
 import os
+from tkinter import *
 from math import inf
+
 
 buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 current_line_history = 0
@@ -105,6 +107,7 @@ def free_space_check(position):
 def get_file_line_numbers(file):
     return sum(1 for _ in open(file))
 
+
 def replay():
     while True:
         x = input("Do you want to play again? (Yes/No)").lower()
@@ -159,7 +162,6 @@ def undo(redo):
         current_line_history -= 1
 
     linecache.clearcache()
-
     undo_history_line = linecache.getline(file_to_game, current_line_history)
 
     for index, marker in enumerate(undo_history_line):
@@ -168,6 +170,64 @@ def undo(redo):
 
 
 if __name__ == "__main__":
+
+    tkwindow = Tk()
+    tkwindow.title('TicTacToe')
+    tkwindow.geometry("800x800")
+    tkwindow.configure(bg="black")
+    tkwindow.resizable(0,0)
+
+    tkwindow.columnconfigure(0, weight=3)
+    tkwindow.columnconfigure(1, weight=3)
+    tkwindow.columnconfigure(2, weight=3)
+    tkwindow.rowconfigure(0, weight=3)
+    tkwindow.rowconfigure(1, weight=3)
+    tkwindow.rowconfigure(2, weight=3)
+    cross_photo = PhotoImage(file='Cross3.png')
+    circle_photo = PhotoImage(file='circle.png')
+
+    label1 = Label(master=tkwindow, bg='white', text="7", height=15, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label1.grid(row=0, column=0)
+
+    label2 = Label(master=tkwindow, bg='white', text="4", height=16, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label2.grid(row=1, column=0)
+
+    label2_marker = Label(master=tkwindow, image=cross_photo)
+    label2_marker.grid(row=1, column=0)
+
+    label3 = Label(master=tkwindow, bg='white', text="1", height=16, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label3.grid(row=2, column=0)
+
+    label3_marker = Label(master=tkwindow, image=circle_photo)
+    label3_marker.grid(row=2, column=0)
+
+    label4 = Label(master=tkwindow, bg='white', text="8", height=15, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label4.grid(row=0, column=1)
+
+    label5 = Label(master=tkwindow, bg='White', text="5", height=16, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label5.grid(row=1, column=1)
+
+    label6 = Label(master=tkwindow, bg='White', text="2", height=16, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label6.grid(row=2, column=1)
+
+    label7 = Label(master=tkwindow, bg='White', text="9", height=15, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label7.grid(row=0, column=2)
+
+    label8 = Label(master=tkwindow, bg='White', text="6", height=16, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label8.grid(row=1, column=2)
+
+    label9 = Label(master=tkwindow, bg='White', text="3", height=16, width=36, anchor=SE, font=('Helvetica', 9, 'bold'))
+    label9.grid(row=2, column=2)
+
+    label10 = Label(master=tkwindow, bg='#FF0000', text="Welcome to TIC TAC TOE :)",  width=30, anchor= CENTER, font=('Helvetica', 9, 'bold'))
+    label10.grid(row=3, column=1)
+
+    entry1 = Entry(master=tkwindow, bg='#FFFFFF', width="40")
+    entry1.grid(row=4, column=1, padx='5', pady='5')
+
+    tkwindow.mainloop()
+
+
     # file = easygui.fileopenbox()
     # print(file) // load game
     if os.path.exists("history.txt"):
