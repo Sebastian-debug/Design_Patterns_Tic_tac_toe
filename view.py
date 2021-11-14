@@ -2,7 +2,20 @@ from tkinter import *
 
 
 class View(Tk):
+    singleton_instance = None
+
+    @staticmethod
+    def getInstance():
+        if View.singleton_instance is None:
+            return View()
+        else:
+            return View.singleton_instance
+
     def __init__(self):
+        if View.singleton_instance is not None:
+            raise Exception("There can only be one instance of View")
+        else:
+            View.singleton_instance = self
         Tk.__init__(self)
         self.player_1_marker = "X"
         self.player_2_marker = "O"

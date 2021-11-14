@@ -4,9 +4,8 @@ from model import *
 class Controller(object):
     def __init__(self):
         self.player_count = 1
-        self.file_name = "history.txt"
         self.view = View()
-        self.model = Model(self.file_name)
+        self.model = Model()
         self.model.createFile()
         self.view.bind('<Return>', self.onEnter)
         self.view.mainloop()

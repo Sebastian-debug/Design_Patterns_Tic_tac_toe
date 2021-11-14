@@ -4,9 +4,23 @@ import easygui
 import linecache
 from view import *
 
-class Model():
-    def __init__(self, file_name):
-        self.file_name = file_name
+
+class Model:
+    singleton_instance = None
+
+    @staticmethod
+    def getInstance():
+        if Model.singleton_instance is None:
+            return Model()
+        else:
+            return Model.singleton_instance
+
+    def __init__(self):
+        if Model.singleton_instance is not None:
+            raise Exception("There can only be one instance of Model")
+        else:
+            Model.singleton_instance = self
+        self.file_name = "history.txt"
         self.current_line_history = 0
         self.buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
@@ -105,10 +119,10 @@ class Model():
                     check = False
                     break
             if check:
-                #self.view.label10['text'] = "Player " + str(current_player) + " won the Game!"
+                # self.view.label10['text'] = "Player " + str(current_player) + " won the Game!"
                 return "Player " + str(current_player) + " won the Game!"
         if " " not in self.buffer:
-            #self.view.label10['text'] = "DRAW!"
+            # self.view.label10['text'] = "DRAW!"
             return "DRAW!"
         return False
 
@@ -133,5 +147,3 @@ class Model():
         for index, marker in enumerate(undo_history_line):
             if len(self.buffer) != index + 1:
                 self.buffer[index + 1] = marker
-
-
