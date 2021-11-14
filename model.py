@@ -2,7 +2,7 @@ import os
 import shutil
 import easygui
 import linecache
-from view import *
+from constants import *
 
 
 class Model:
@@ -55,26 +55,27 @@ class Model:
         return sum(1 for _ in open(file))
 
     def user_choice(self, choice):
+
         acceptable_range = range(1, 10)
         if not choice.isdigit():
             if choice == "U":
                 if self.current_line_history == 1:
-                    return -1
+                    return INVALID
                 self.undo(False)
-                return 0
+                return VALID
             if choice == "R":
-                return -1 if self.undo(True) == -1 else 0
+                return INVALID if self.undo(True) == INVALID else VALID
             if choice == "N":
-                return -2
+                return NEW_GAME
             if choice == "L":
-                return -3
+                return LOAD_GAME
             if choice == "S":
-                return -4
-            return -1
+                return SAVE_GAME
+            return INVALID
         elif int(choice) not in acceptable_range:
-            return -1
+            return INVALID
         if not self.free_space_check(choice):
-            return -1
+            return INVALID
         return int(choice)
 
     def load_game(self):
@@ -105,7 +106,7 @@ class Model:
             pass
 
     def set_marker(self, marker, position):
-        if position == 0:
+        if position == VALID:
             return
         self.buffer[position] = marker
         self.history_file()
@@ -119,10 +120,9 @@ class Model:
                     check = False
                     break
             if check:
-                # self.view.label10['text'] = "Player " + str(current_player) + " won the Game!"
-                return "Player " + str(current_player) + " won the Game!"
+
+                return "Player " + current_player + " won the Game!"
         if " " not in self.buffer:
-            # self.view.label10['text'] = "DRAW!"
             return "DRAW!"
         return False
 
@@ -137,7 +137,7 @@ class Model:
             if self.get_file_line_numbers(self.file_name) < self.current_line_history:
                 self.current_line_history -= 1
                 print("Cannot redo, there are no steps ahead!")
-                return -1
+                return INVALID
         else:
             self.current_line_history -= 1
 

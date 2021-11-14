@@ -1,40 +1,40 @@
-from view import *
 from model import *
+from constants import *
+from view import *
 
 class Controller(object):
     def __init__(self):
-        self.player_count = 1
+        self.player_count = PLAYER_X_MARKER
         self.view = View()
         self.model = Model()
         self.model.createFile()
         self.view.bind('<Return>', self.onEnter)
         self.view.mainloop()
-        #hallo = self.view.label_marker_list.get()
 
     def onEnter(self, event=None):
-        if self.player_count == 1:
+        if self.player_count == PLAYER_X_MARKER:
             player_marker = "X"
         else:
             player_marker = "O"
 
         choice = self.model.user_choice(self.view.user_entry.get())
-        if choice == -1:
+        if choice == INVALID:
             self.view.label_start['text'] = "Invalid! [1-9] Pick [U] Undo [R] Redo [N] New\n  [L] Load [S] Save"
             return
-        if choice == -2:
+        if choice == NEW_GAME:
             self.model.buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
-            self.player_count = 1
+            self.player_count = PLAYER_X_MARKER
             self.model.current_line_history = 0
             self.model.createFile()
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.user_entry.delete(0, END)
             return
-        if choice == -3:
-            self.player_count = 1 if self.model.load_game() else 2
+        if choice == LOAD_GAME:
+            self.player_count = PLAYER_X_MARKER if self.model.load_game() else PLAYER_O_MARKER
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.user_entry.delete(0, END)
             return
-        if choice == -4:
+        if choice == SAVE_GAME:
             self.model.save_game()
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.user_entry.delete(0, END)
@@ -42,7 +42,7 @@ class Controller(object):
 
         self.model.set_marker(player_marker, choice)
         self.view.display(self.model.buffer, self.model.current_line_history)
-        win_check_ret = self.model.win_check(player_marker, self.player_count)
+        win_check_ret = self.model.win_check(player_marker, PLAYER_X_MARKER if self.player_count else PLAYER_O_MARKER)
         if win_check_ret:
             self.view.label_start["text"] = win_check_ret
             self.view.display(self.model.buffer, self.model.current_line_history)
@@ -51,13 +51,13 @@ class Controller(object):
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.label_start['text'] = "[1-9] Pick [U] Undo [R] Redo [N] New\n  [L] Load [S] Save"
 
-        if self.player_count == 1:
-            self.player_count = 2
-            self.view.label_players["text"] = "Player O"
+        if self.player_count == PLAYER_X_MARKER:
+            self.player_count = PLAYER_O_MARKER
+            self.view.label_players["text"] = f"Player {PLAYER_O_MARKER}"
             self.view.label_players["bg"] = "pink"
         else:
-            self.player_count = 1
-            self.view.label_players["text"] = "Player X"
+            self.player_count = PLAYER_X_MARKER
+            self.view.label_players["text"] = f"Player {PLAYER_X_MARKER}"
             self.view.label_players["bg"] = "green"
 
         self.view.user_entry.delete(0, END)
