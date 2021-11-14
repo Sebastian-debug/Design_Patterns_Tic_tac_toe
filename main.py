@@ -1,3 +1,4 @@
+"""
 import shutil
 
 import easygui
@@ -342,3 +343,10 @@ if __name__ == "__main__":
     tkwindow.bind('<Return>', onEnter)
 
     tkwindow.mainloop()
+"""
+
+from controller import *
+
+if __name__ == "__main__":
+    c = Controller()
+
