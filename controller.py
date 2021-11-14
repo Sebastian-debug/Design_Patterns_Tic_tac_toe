@@ -23,17 +23,15 @@ class Controller(object):
             self.view.label10['text'] = "Invalid! [1-9] Pick [U] Undo [R] Redo [N] New\n  [L] Load [S] Save"
             return
         if choice == -2:
-            global buffer
-            buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
-            player_count = 1
-            global current_line_history
-            current_line_history = 0
-            self.model.new_history_file()
+            self.model.buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
+            self.player_count = 1
+            self.model.current_line_history = 0
+            self.model.createFile()
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.entry1.delete(0, END)
             return
         if choice == -3:
-            self.model.load_game()
+            self.player_count = 1 if self.model.load_game() else 2
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.entry1.delete(0, END)
             return

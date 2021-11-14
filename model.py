@@ -14,6 +14,7 @@ class Model():
         if os.path.exists(self.file_name):
             os.remove(self.file_name)
         open(self.file_name, "a")
+        self.history_file()
 
     def history_file(self):
         with open(self.file_name, "a+") as file:
@@ -48,8 +49,7 @@ class Model():
                 self.undo(False)
                 return 0
             if choice == "R":
-                self.undo(True)
-                return 0
+                return -1 if self.undo(True) == -1 else 0
             if choice == "N":
                 return -2
             if choice == "L":
@@ -61,32 +61,22 @@ class Model():
             return -1
         if not self.free_space_check(choice):
             return -1
-        within_range = True
         return int(choice)
-
-    def new_history_file(self):
-        if os.path.exists(self.file_name):
-            os.remove(self.file_name)
-        open(self.file_name, "a")
 
     def load_game(self):
         file_name_loaded_game = easygui.fileopenbox()
-        global file_name
-        file_name = file_name_loaded_game
-        open(file_name, "a")
+        self.file_name = file_name_loaded_game
+        open(self.file_name, "a")
 
         linecache.clearcache()
-        last_line_new_file = linecache.getline(file_name, self.get_file_line_numbers(file_name))
+        last_line_new_file = linecache.getline(self.file_name, self.get_file_line_numbers(self.file_name))
 
         for line_index in range(len(last_line_new_file)):
             if line_index + 1 < len(self.buffer) and last_line_new_file[line_index] != "\n":
                 self.buffer[line_index + 1] = last_line_new_file[line_index]
 
-        global current_line_history
-
-        current_line_history = self.get_file_line_numbers(file_name)
-        global player_count
-        player_count = 1 if current_line_history % 2 else 0
+        self.current_line_history = self.get_file_line_numbers(self.file_name)
+        return True if self.current_line_history % 2 else False
 
     def save_game(self):
 
@@ -127,14 +117,13 @@ class Model():
 
     def undo(self, redo):
         file_to_game = self.file_name
-        global current_line_history
 
         if redo:
             self.current_line_history += 1
             if self.get_file_line_numbers(self.file_name) < self.current_line_history:
                 self.current_line_history -= 1
                 print("Cannot redo, there are no steps ahead!")
-                return
+                return -1
         else:
             self.current_line_history -= 1
 
