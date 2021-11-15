@@ -3,25 +3,21 @@ from abc import abstractmethod
 
 class Subject:
 
-    def __init__(self):
-        self.observers = set()
-
+    @abstractmethod
     def attach(self, observer):
-        self.observers.add(observer)
+        pass
 
+    @abstractmethod
     def detach(self, observer):
-        self.observers.discard(observer)
+        pass
 
+    @abstractmethod
     def notify(self):
-        for observer in self.observers:
-            observer.update(observer)
+        pass
 
 
 class Observer:
 
     @abstractmethod
-    def update(self, subject: Subject):
+    def update(self):
         pass
-
-
-

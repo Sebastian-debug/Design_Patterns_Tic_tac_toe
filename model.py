@@ -8,7 +8,8 @@ from observer import *
 
 class Model(Subject):
     singleton_instance = None
-    _state = 0
+    state = ""
+    observers = list()
 
     @staticmethod
     def getInstance():
@@ -25,6 +26,21 @@ class Model(Subject):
         self.file_name = "history.txt"
         self.current_line_history = 0
         self.buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
+        self.info_label = VALID_INPUT
+        self.current_player_label = "Player X"
+        self.background_label = "green"
+        self.player_count = PLAYER_X_MARKER
+        self.player_marker = "X"
+
+    def attach(self, observer):
+        self.observers.append(observer)
+
+    def detach(self, observer):
+        self.observers.remove(observer)
+
+    def notify(self):
+        for observer in self.observers:
+            observer.update()
 
     def createFile(self):
         if os.path.exists(self.file_name):
@@ -56,30 +72,72 @@ class Model(Subject):
     def get_file_line_numbers(self, file):
         return sum(1 for _ in open(file))
 
+    def invalid_label(self):
+        self.state = STATE_NEW_INFO_LABEL
+        self.info_label = INVALID_INPUT
+        self.notify()
+
+    def valid_label(self):
+        self.state = STATE_NEW_BUFFER
+        self.notify()
+        self.state = STATE_NEW_INFO_LABEL
+        self.info_label = VALID_INPUT
+        self.notify()
+
     def user_choice(self, choice):
+        if self.player_count == PLAYER_X_MARKER:
+            self.player_marker = "X"
+        else:
+            self.player_marker = "O"
 
         acceptable_range = range(1, 10)
         if not choice.isdigit():
             if choice == "U":
                 if self.current_line_history == 1:
+                    self.invalid_label()
+                    print("0")
                     return INVALID
                 self.undo(False)
+                print("1")
                 return VALID
             if choice == "R":
+                print("2")
                 return INVALID if self.undo(True) == INVALID else VALID
             if choice == "N":
+                self.buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
+                self.player_count = PLAYER_X_MARKER
+                self.current_line_history = 0
+                self.createFile()
+                self.state = STATE_NEW_BUFFER
+                self.notify()
+                self.state = STATE_CURRENT_PLAYER
+                self.current_player_label = f"Player {PLAYER_X_MARKER}"
+                self.background_label = "green"
+                self.notify()
+                print("3")
                 return NEW_GAME
             if choice == "L":
+                self.player_count = PLAYER_X_MARKER if self.load_game() else PLAYER_O_MARKER
+                self.state = STATE_NEW_BUFFER
+                self.notify()
+                self.state = STATE_CURRENT_PLAYER
+                self.current_player_label = f"Player {self.player_count}"
+                self.background_label = "green" if self.player_count == PLAYER_X_MARKER else "pink"
+                self.notify()
+                print("4")
                 return LOAD_GAME
             if choice == "S":
+                self.save_game()
+                print("5")
                 return SAVE_GAME
-            if choice == "C":
-                return VS_COMPUTER
             return INVALID
         elif int(choice) not in acceptable_range:
+            print("6")
             return INVALID
         if not self.free_space_check(choice):
+            print("7")
             return INVALID
+        print(choice)
         return int(choice)
 
     def load_game(self):
@@ -109,25 +167,36 @@ class Model(Subject):
         except shutil.SameFileError:
             pass
 
-    def set_marker(self, marker, position):
+    def set_marker(self, position):
         if position == VALID:
             return
-        self.buffer[position] = marker
+        print(f"position: {position}")
+        self.buffer[position] = self.player_marker
         self.history_file()
+        self.state = STATE_NEW_BUFFER
+        self.notify()
 
-    def win_check(self, mark, current_player):
+    def win_check(self, current_player):
         win_pos = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]]
         for x in win_pos:
             check = True
             for y in x:
-                if self.buffer[y] != mark:
+                if self.buffer[y] != self.player_marker:
                     check = False
                     break
             if check:
-                return "Player " + current_player + " won the Game!"
+                self.info_label = "Player " + current_player + " won the Game!"
+                self.state = STATE_NEW_INFO_LABEL
+                self.notify()
+                return
         if " " not in self.buffer:
-            return "DRAW!"
-        return False
+            self.info_label = "DRAW!"
+            self.state = STATE_NEW_INFO_LABEL
+            self.notify()
+            return
+        self.info_label = VALID_INPUT
+        self.state = STATE_NEW_INFO_LABEL
+        self.notify()
 
     def free_space_check(self, position):
         return True if self.buffer[int(position)] == " " else False
@@ -140,7 +209,9 @@ class Model(Subject):
             if self.get_file_line_numbers(self.file_name) < self.current_line_history:
                 self.current_line_history -= 1
                 print("Cannot redo, there are no steps ahead!")
+                self.invalid_label()
                 return INVALID
+
         else:
             self.current_line_history -= 1
 
@@ -150,3 +221,10 @@ class Model(Subject):
         for index, marker in enumerate(undo_history_line):
             if len(self.buffer) != index + 1:
                 self.buffer[index + 1] = marker
+        self.valid_label()
+        return VALID
+
+    def handle_valid_move(self, choice):
+        self.set_marker(choice)
+        self.win_check(PLAYER_X_MARKER if self.player_count else PLAYER_O_MARKER)
+

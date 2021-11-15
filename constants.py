@@ -5,4 +5,8 @@ LOAD_GAME = -3
 SAVE_GAME = -4
 PLAYER_X_MARKER = "X"
 PLAYER_O_MARKER = "O"
-
+STATE_NEW_BUFFER = 1
+STATE_NEW_INFO_LABEL = 2
+STATE_CURRENT_PLAYER = 3
+VALID_INPUT = "[1-9] Pick [U] Undo [R] Redo\n [N] New [L] Load [S] Save"
+INVALID_INPUT = "INVALID! [1-9] Pick [U] Undo [R] Redo\n [N] New [L] Load [S] Save"

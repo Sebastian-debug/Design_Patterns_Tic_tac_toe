@@ -1,16 +1,10 @@
 from tkinter import *
 from observer import *
+from constants import *
 
 
 class View(Tk, Observer):
     singleton_instance = None
-
-    @staticmethod
-    def getInstance():
-        if View.singleton_instance is None:
-            return View()
-        else:
-            return View.singleton_instance
 
     def __init__(self, model):
         if View.singleton_instance is not None:
@@ -20,7 +14,7 @@ class View(Tk, Observer):
 
         Tk.__init__(self)
         self.model = model
-        model.attach(self)
+        self.model.attach(self)
         self.player_1_marker = "X"
         self.player_2_marker = "O"
         self.label_marker_list = list()
@@ -46,7 +40,7 @@ class View(Tk, Observer):
             self.label_marker_list.append(label_marker)
 
         self.label_start = Label(master=self, bg='#FF0000',
-                                 text="[1-9] Pick [U] Undo [R] Redo [N] New\n  [L] Load [S] Save", width=30,
+                                 text=VALID_INPUT, width=30,
                                  anchor=CENTER,
                                  font=('Helvetica', 8, 'bold'))
         self.label_start.grid(row=4, column=1)
@@ -56,27 +50,35 @@ class View(Tk, Observer):
         self.user_entry = Entry(master=self, bg='#FFFFFF', width="40")
         self.user_entry.grid(row=5, column=1, padx='5', pady='5')
 
-
-    def update(self, buffer, current_line_history):
+    def update(self):
         print("\n" * 100)
         print(f"      |      "  "  |\n"
-              f" {buffer[7]}    |   {buffer[8]}  "f"  |  {buffer[9]}\n"
+              f" {self.model.buffer[7]}    |   {self.model.buffer[8]}  "f"  |  {self.model.buffer[9]}\n"
               "      |      "  "  |\n"
               "--------------------")
         print(f"      |      "  "  |\n"
-              f" {buffer[4]}    |   {buffer[5]}  "f"  |  {buffer[6]}\n"
+              f" {self.model.buffer[4]}    |   {self.model.buffer[5]}  "f"  |  {self.model.buffer[6]}\n"
               "      |      "  "  |\n"
               "--------------------")
         print(f"      |      "  "  |\n"
-              f" {buffer[1]}    |   {buffer[2]}  "f"  |  {buffer[3]}\n"
+              f" {self.model.buffer[1]}    |   {self.model.buffer[2]}  "f"  |  {self.model.buffer[3]}\n"
               "      |      "  "  |\n")
 
-        print(f"current_line_history: {current_line_history}\n")
-        for index, field in enumerate(buffer[1:]):
-            print("Field: " + field + " Index: " + str(index))
-            if field == "X":
-                self.label_marker_list[index]['image'] = self.cross_photo
-            elif field == "O":
-                self.label_marker_list[index]['image'] = self.circle_photo
-            else:
-                self.label_marker_list[index]['image'] = self.blank_photo
+        if self.model.state == STATE_NEW_BUFFER:
+            for index, field in enumerate(self.model.buffer[1:]):
+                print("Field: " + field + " Index: " + str(index))
+                if field == "X":
+                    self.label_marker_list[index]['image'] = self.cross_photo
+                elif field == "O":
+                    self.label_marker_list[index]['image'] = self.circle_photo
+                else:
+                    self.label_marker_list[index]['image'] = self.blank_photo
+        elif self.model.state == STATE_NEW_INFO_LABEL:
+            self.label_start["text"] = self.model.info_label
+            if self.model.info_label == INVALID_INPUT:
+                return
+        elif self.model.state == STATE_CURRENT_PLAYER:
+            self.label_players["text"] = self.model.current_player_label
+            self.label_players["bg"] = self.model.background_label
+
+        self.user_entry.delete(0, END)
