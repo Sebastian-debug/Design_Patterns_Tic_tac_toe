@@ -3,10 +3,12 @@ import shutil
 import easygui
 import linecache
 from constants import *
+from observer import *
 
 
-class Model:
+class Model(Subject):
     singleton_instance = None
+    _state = 0
 
     @staticmethod
     def getInstance():
@@ -71,6 +73,8 @@ class Model:
                 return LOAD_GAME
             if choice == "S":
                 return SAVE_GAME
+            if choice == "C":
+                return VS_COMPUTER
             return INVALID
         elif int(choice) not in acceptable_range:
             return INVALID
@@ -120,7 +124,6 @@ class Model:
                     check = False
                     break
             if check:
-
                 return "Player " + current_player + " won the Game!"
         if " " not in self.buffer:
             return "DRAW!"

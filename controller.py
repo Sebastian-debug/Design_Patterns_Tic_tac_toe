@@ -5,15 +5,17 @@ from PlayerVsPlayer import *
 from PlayerVsComputer import *
 
 
-class Controller(object):
+class Controller():
     def __init__(self, strategy):
         self.player_count = PLAYER_X_MARKER
-        self.view = View()
         self.model = Model()
+        self.view = View(self.model)
         self.model.createFile()
         self.view.bind('<Return>', self.onEnter)
         self.strategy = strategy
         self.view.mainloop()
+        self.model.detach(self.view)
+
 
     def onEnter(self, event=None):
         if self.player_count == PLAYER_X_MARKER:

@@ -1,7 +1,8 @@
 from tkinter import *
+from observer import *
 
 
-class View(Tk):
+class View(Tk, Observer):
     singleton_instance = None
 
     @staticmethod
@@ -11,12 +12,15 @@ class View(Tk):
         else:
             return View.singleton_instance
 
-    def __init__(self):
+    def __init__(self, model):
         if View.singleton_instance is not None:
             raise Exception("There can only be one instance of View")
         else:
             View.singleton_instance = self
+
         Tk.__init__(self)
+        self.model = model
+        model.attach(self)
         self.player_1_marker = "X"
         self.player_2_marker = "O"
         self.label_marker_list = list()
@@ -52,7 +56,8 @@ class View(Tk):
         self.user_entry = Entry(master=self, bg='#FFFFFF', width="40")
         self.user_entry.grid(row=5, column=1, padx='5', pady='5')
 
-    def display(self, buffer, current_line_history):
+
+    def update(self, buffer, current_line_history):
         print("\n" * 100)
         print(f"      |      "  "  |\n"
               f" {buffer[7]}    |   {buffer[8]}  "f"  |  {buffer[9]}\n"
