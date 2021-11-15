@@ -1,14 +1,18 @@
 from model import *
 from constants import *
 from view import *
+from PlayerVsPlayer import *
+from PlayerVsComputer import *
+
 
 class Controller(object):
-    def __init__(self):
+    def __init__(self, strategy):
         self.player_count = PLAYER_X_MARKER
         self.view = View()
         self.model = Model()
         self.model.createFile()
         self.view.bind('<Return>', self.onEnter)
+        self.strategy = strategy
         self.view.mainloop()
 
     def onEnter(self, event=None):
@@ -51,13 +55,8 @@ class Controller(object):
             self.view.display(self.model.buffer, self.model.current_line_history)
             self.view.label_start['text'] = "[1-9] Pick [U] Undo [R] Redo [N] New\n  [L] Load [S] Save"
 
-        if self.player_count == PLAYER_X_MARKER:
-            self.player_count = PLAYER_O_MARKER
-            self.view.label_players["text"] = f"Player {PLAYER_O_MARKER}"
-            self.view.label_players["bg"] = "pink"
-        else:
-            self.player_count = PLAYER_X_MARKER
-            self.view.label_players["text"] = f"Player {PLAYER_X_MARKER}"
-            self.view.label_players["bg"] = "green"
+        self.player_count, self.view.label_players["text"], self.view.label_players["bg"] = \
+            self.strategy.strategy(self.player_count)
+        self.view.display(self.model.buffer, self.model.current_line_history)
 
         self.view.user_entry.delete(0, END)

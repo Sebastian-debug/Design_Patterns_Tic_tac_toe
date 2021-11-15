@@ -1,5 +1,7 @@
 from controller import *
+from PlayerVsPlayer import *
+from PlayerVsComputer import *
 
 if __name__ == "__main__":
-    c = Controller()
-
+    strategy = PlayerVsComputer()
+    c = Controller(strategy)
