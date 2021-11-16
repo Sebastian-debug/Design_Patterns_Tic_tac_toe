@@ -4,14 +4,7 @@ from constants import *
 
 
 class View(Tk, Observer):
-    singleton_instance = None
-
     def __init__(self, model):
-        if View.singleton_instance is not None:
-            raise Exception("There can only be one instance of View")
-        else:
-            View.singleton_instance = self
-
         Tk.__init__(self)
         self.model = model
         self.model.attach(self)

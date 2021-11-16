@@ -167,11 +167,11 @@ class Model(Subject):
         except shutil.SameFileError:
             pass
 
-    def set_marker(self, position):
-        if position == VALID:
+    def set_marker(self, position, computer):
+        if position == 0:
             return
         print(f"position: {position}")
-        self.buffer[position] = self.player_marker
+        self.buffer[position] = PLAYER_O_MARKER if computer else self.player_marker
         self.history_file()
         self.state = STATE_NEW_BUFFER
         self.notify()
@@ -225,6 +225,6 @@ class Model(Subject):
         return VALID
 
     def handle_valid_move(self, choice):
-        self.set_marker(choice)
+        self.set_marker(choice, False)
         self.win_check(PLAYER_X_MARKER if self.player_count else PLAYER_O_MARKER)
 

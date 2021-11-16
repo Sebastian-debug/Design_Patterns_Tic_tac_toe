@@ -1,17 +1,20 @@
 from model import *
 from constants import *
 from view import *
-from PlayerVsPlayer import *
-from PlayerVsComputer import *
+from strategyview import *
 
 
 class Controller:
-    def __init__(self, strategy):
+    def __init__(self):
         self.model = Model()
+        self.strategy_view = StrategyView()
+        self.strategy_view.mainloop()
+        print(self.strategy_view.strategy)
+        self.strategy = self.strategy_view.strategy
+        self.strategy_view.destroy()
         self.view = View(self.model)
         self.model.createFile()
         self.view.bind('<Return>', self.onEnter)
-        self.strategy = strategy
         self.view.mainloop()
         self.model.detach(self.view)
 
