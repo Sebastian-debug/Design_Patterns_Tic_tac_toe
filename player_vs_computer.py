@@ -2,11 +2,32 @@ from constants import *
 from model import *
 from random import randint
 
+
 class PlayerVsComputer():
-    def __init__(self):
-        self.name = "PlayerVsComputer"
+    """
+    A class to implement the behaviour of the player vs computer game mode.
+
+    Attributes
+    ----------
+    Methods
+    -------
+    strategy(player_count):
+       the function for handling the move of the computer
+    """
 
     def strategy(self, player_count):
+        """
+         Updates the labels according to the current state of the model
+        Parameters
+        ----------
+        player_count : str
+            The current player's marker
+
+        Returns
+        -------
+        player_count : str
+            The current player's marker
+        """
         model = Model.getInstance()
         position = randint(1, 9)
         values = set()
@@ -24,4 +45,3 @@ class PlayerVsComputer():
         model.notify()
         model.win_check(PLAYER_O_MARKER)
         return player_count
-

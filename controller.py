@@ -1,11 +1,23 @@
-from model import *
-from constants import *
 from view import *
-from strategyview import *
+from strategy_view import *
 
 
 class Controller:
+    """
+        A class to represent the controller
+
+        Attributes
+        ----------
+        Methods
+        -------
+        onEnter(event=None):
+           the function for handling the input of the user
+        """
     def __init__(self):
+        """
+        Parameters
+        ----------
+        """
         self.model = Model()
         self.strategy_view = StrategyView()
         self.strategy_view.mainloop()
@@ -18,6 +30,16 @@ class Controller:
         self.model.detach(self.view)
 
     def onEnter(self, event=None):
+        """
+        The function for handling the input of the user
+        Parameters
+        ----------
+        event : None
+            Tkinter event for the user entry
+        Returns
+        -------
+        None
+        """
         choice = self.model.user_choice(self.view.user_entry.get())
 
         if choice == INVALID or choice == NEW_GAME or choice == LOAD_GAME or choice == SAVE_GAME:

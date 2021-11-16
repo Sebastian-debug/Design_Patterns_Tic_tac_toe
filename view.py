@@ -4,7 +4,27 @@ from constants import *
 
 
 class View(Tk, Observer):
+    """
+    A class to represent the View.
+
+    Attributes
+    ----------
+    model : Model
+        the model instance
+
+    Methods
+    -------
+    update():
+        Updates the labels according to the current state of the model
+    """
     def __init__(self, model):
+        """
+        Parameters
+        ----------
+        model: Model
+            the model instance
+
+        """
         Tk.__init__(self)
         self.model = model
         self.model.attach(self)
@@ -44,6 +64,14 @@ class View(Tk, Observer):
         self.user_entry.grid(row=5, column=1, padx='5', pady='5')
 
     def update(self):
+        """
+         Updates the labels according to the current state of the model
+        Parameters
+        ----------
+        Returns
+        -------
+        None
+        """
         if self.model.state == STATE_NEW_BUFFER:
             for index, field in enumerate(self.model.buffer[1:]):
                 if field == "X":

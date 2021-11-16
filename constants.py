@@ -1,4 +1,3 @@
-VALID = 0
 INVALID = -1
 NEW_GAME = -2
 LOAD_GAME = -3

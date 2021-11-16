@@ -1,12 +1,20 @@
-from PlayerVsPlayer import *
-from PlayerVsComputer import *
-from user_strategy import *
 from tkinter import *
-from PlayerVsPlayer import *
-from PlayerVsComputer import *
+from player_vs_player import *
+from player_vs_computer import *
 
 
 class StrategyView(Tk):
+    """
+    A class to represent the view for choosing the game mode.
+
+    Attributes
+    ----------
+    Methods
+    -------
+    chooseStrategy(playstyle):
+        user can choose the different game modes
+
+    """
     def __init__(self):
         Tk.__init__(self)
         self.title("Game Mode")
@@ -34,6 +42,15 @@ class StrategyView(Tk):
         button_computer.place(x=210, y=95)
 
     def chooseStrategy(self, playstyle):
+        """
+        Updates the markers of the players according to the current turn
+        Parameters
+        ----------
+        playstyle : bool
+            The game mode
+        Returns
+        -------
+        """
         if playstyle:
             self.strategy = PlayerVsPlayer()
         else:
