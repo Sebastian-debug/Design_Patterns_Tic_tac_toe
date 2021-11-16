@@ -44,22 +44,8 @@ class View(Tk, Observer):
         self.user_entry.grid(row=5, column=1, padx='5', pady='5')
 
     def update(self):
-        print("\n" * 100)
-        print(f"      |      "  "  |\n"
-              f" {self.model.buffer[7]}    |   {self.model.buffer[8]}  "f"  |  {self.model.buffer[9]}\n"
-              "      |      "  "  |\n"
-              "--------------------")
-        print(f"      |      "  "  |\n"
-              f" {self.model.buffer[4]}    |   {self.model.buffer[5]}  "f"  |  {self.model.buffer[6]}\n"
-              "      |      "  "  |\n"
-              "--------------------")
-        print(f"      |      "  "  |\n"
-              f" {self.model.buffer[1]}    |   {self.model.buffer[2]}  "f"  |  {self.model.buffer[3]}\n"
-              "      |      "  "  |\n")
-
         if self.model.state == STATE_NEW_BUFFER:
             for index, field in enumerate(self.model.buffer[1:]):
-                print("Field: " + field + " Index: " + str(index))
                 if field == "X":
                     self.label_marker_list[index]['image'] = self.cross_photo
                 elif field == "O":

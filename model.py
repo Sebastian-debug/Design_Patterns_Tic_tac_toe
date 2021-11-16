@@ -31,6 +31,7 @@ class Model(Subject):
         self.background_label = "green"
         self.player_count = PLAYER_X_MARKER
         self.player_marker = "X"
+        self.already_won = GAME_STATE_RUNNING
 
     def attach(self, observer):
         self.observers.append(observer)
@@ -95,14 +96,11 @@ class Model(Subject):
             if choice == "U":
                 if self.current_line_history == 1:
                     self.invalid_label()
-                    print("0")
                     return INVALID
                 self.undo(False)
-                print("1")
-                return VALID
+                return UNDO
             if choice == "R":
-                print("2")
-                return INVALID if self.undo(True) == INVALID else VALID
+                return INVALID if self.undo(True) == INVALID else REDO
             if choice == "N":
                 self.buffer = ["Ä", " ", " ", " ", " ", " ", " ", " ", " ", " "]
                 self.player_count = PLAYER_X_MARKER
@@ -114,7 +112,6 @@ class Model(Subject):
                 self.current_player_label = f"Player {PLAYER_X_MARKER}"
                 self.background_label = "green"
                 self.notify()
-                print("3")
                 return NEW_GAME
             if choice == "L":
                 self.player_count = PLAYER_X_MARKER if self.load_game() else PLAYER_O_MARKER
@@ -124,21 +121,17 @@ class Model(Subject):
                 self.current_player_label = f"Player {self.player_count}"
                 self.background_label = "green" if self.player_count == PLAYER_X_MARKER else "pink"
                 self.notify()
-                print("4")
                 return LOAD_GAME
             if choice == "S":
                 self.save_game()
-                print("5")
                 return SAVE_GAME
             return INVALID
         elif int(choice) not in acceptable_range:
-            print("6")
             return INVALID
         if not self.free_space_check(choice):
-            print("7")
             return INVALID
-        print(choice)
-        return int(choice)
+
+        return int(choice) if self.already_won == GAME_STATE_RUNNING else INVALID
 
     def load_game(self):
         file_name_loaded_game = easygui.fileopenbox()
@@ -168,9 +161,8 @@ class Model(Subject):
             pass
 
     def set_marker(self, position, computer):
-        if position == 0:
+        if position == 0 or position == UNDO or position == REDO:
             return
-        print(f"position: {position}")
         self.buffer[position] = PLAYER_O_MARKER if computer else self.player_marker
         self.history_file()
         self.state = STATE_NEW_BUFFER
@@ -181,22 +173,25 @@ class Model(Subject):
         for x in win_pos:
             check = True
             for y in x:
-                if self.buffer[y] != self.player_marker:
+                if self.buffer[y] != current_player:
                     check = False
                     break
             if check:
                 self.info_label = "Player " + current_player + " won the Game!"
                 self.state = STATE_NEW_INFO_LABEL
                 self.notify()
-                return
+                self.already_won = GAME_STATE_ENDED
+                return True
         if " " not in self.buffer:
             self.info_label = "DRAW!"
             self.state = STATE_NEW_INFO_LABEL
             self.notify()
-            return
+            self.already_won = GAME_STATE_ENDED
+            return True
         self.info_label = VALID_INPUT
         self.state = STATE_NEW_INFO_LABEL
         self.notify()
+        self.already_won = GAME_STATE_RUNNING
 
     def free_space_check(self, position):
         return True if self.buffer[int(position)] == " " else False
@@ -208,23 +203,21 @@ class Model(Subject):
             self.current_line_history += 1
             if self.get_file_line_numbers(self.file_name) < self.current_line_history:
                 self.current_line_history -= 1
-                print("Cannot redo, there are no steps ahead!")
                 self.invalid_label()
                 return INVALID
 
         else:
             self.current_line_history -= 1
-
         linecache.clearcache()
         undo_history_line = linecache.getline(file_to_game, self.current_line_history)
-
         for index, marker in enumerate(undo_history_line):
             if len(self.buffer) != index + 1:
                 self.buffer[index + 1] = marker
         self.valid_label()
         return VALID
 
-    def handle_valid_move(self, choice):
-        self.set_marker(choice, False)
-        self.win_check(PLAYER_X_MARKER if self.player_count else PLAYER_O_MARKER)
+    def checkIfAlreadyWon(self):
+        if not self.win_check(PLAYER_X_MARKER):
+            self.win_check(PLAYER_O_MARKER)
+
 

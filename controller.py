@@ -9,7 +9,6 @@ class Controller:
         self.model = Model()
         self.strategy_view = StrategyView()
         self.strategy_view.mainloop()
-        print(self.strategy_view.strategy)
         self.strategy = self.strategy_view.strategy
         self.strategy_view.destroy()
         self.view = View(self.model)
@@ -22,9 +21,16 @@ class Controller:
         choice = self.model.user_choice(self.view.user_entry.get())
 
         if choice == INVALID or choice == NEW_GAME or choice == LOAD_GAME or choice == SAVE_GAME:
-            print("HALLO")
+            if choice == LOAD_GAME or choice == NEW_GAME:
+                self.model.checkIfAlreadyWon()
             return
 
-        self.model.handle_valid_move(choice)
+        if isinstance(self.strategy, PlayerVsComputer) and (choice == UNDO or choice == REDO):
+            self.model.checkIfAlreadyWon()
+            return
 
-        self.model.player_count = self.strategy.strategy(self.model.player_count)
+        self.model.set_marker(choice, False)
+        self.model.checkIfAlreadyWon()
+
+        if not (isinstance(self.strategy, PlayerVsComputer) and self.model.win_check(PLAYER_X_MARKER)):
+            self.model.player_count = self.strategy.strategy(self.model.player_count)

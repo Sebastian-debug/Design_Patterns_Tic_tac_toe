@@ -22,5 +22,6 @@ class PlayerVsComputer():
         model.current_player_label = f"Player {player_count}"
         model.background_label = "green"
         model.notify()
+        model.win_check(PLAYER_O_MARKER)
         return player_count
 
