@@ -15,20 +15,23 @@ class StrategyView(Tk):
         self.resizable(0, 0)
         self.columnconfigure(0, weight=3)
         self.rowconfigure(1, weight=1)
-        self.label_playstyle = Label(master=self, bg='gray', text=f"Choose your playstyle:", height=5, width=35, anchor=CENTER,
-                           font=('Helvetica', 14, 'bold'))
+        self.label_playstyle = Label(master=self, fg='white', bg='grey1', text=f"Choose your playstyle:", height=4,
+                                     width=31, anchor=CENTER,
+                                     font=('Bookman Old Style', 14, 'bold'))
         self.label_playstyle.grid(column=0, row=0)
         self.label_playstyle.place(x=0, y=0)
-        button_player = Button(self, text="Player vs Player", command=lambda: self.chooseStrategy(True), bg='green',
-                               width=16, height=13,
-                               anchor=CENTER, font=('Helvetica', 16, 'bold'))
+        button_player = Button(self, text="Player vs Player", fg='white', command=lambda: self.chooseStrategy(True),
+                               bg='blue1',
+                               width=15, height=12,
+                               anchor=CENTER, font=('Bookman Old Style', 14, 'bold'))
         button_player.grid(column=0, row=1)
-        button_player.place(x=0, y=100)
-        button_computer = Button(self, text="Player vs Computer", command=lambda: self.chooseStrategy(False), bg='red',
-                                 width=16, height=13,
-                                 anchor=CENTER, font=('Helvetica', 16, 'bold'))
+        button_player.place(x=0, y=95)
+        button_computer = Button(self, text="Player vs Computer", fg='white',
+                                 command=lambda: self.chooseStrategy(False), bg='red1',
+                                 width=15, height=12,
+                                 anchor=CENTER, font=('Bookman Old Style', 14, 'bold'))
         button_computer.grid(column=1, row=1)
-        button_computer.place(x=200, y=100)
+        button_computer.place(x=210, y=95)
 
     def chooseStrategy(self, playstyle):
         if playstyle:
